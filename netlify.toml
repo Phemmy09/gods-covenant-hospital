@@ -1,0 +1,29 @@
+# ============================================================
+#  God's Covenant Hospital — Netlify Configuration
+# ============================================================
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  command = "cp chatbot-config.js netlify/functions/ && cd netlify/functions && npm install"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirect /api/* calls to Netlify Functions transparently
+[[redirects]]
+  from = "/api/chat"
+  to   = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/save-contact"
+  to   = "/.netlify/functions/save-contact"
+  status = 200
+
+# Handle CORS preflight for API routes
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+  force  = false

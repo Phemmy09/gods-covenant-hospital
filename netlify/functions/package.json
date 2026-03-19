@@ -1,0 +1,8 @@
+{
+  "name": "gch-netlify-functions",
+  "version": "1.0.0",
+  "dependencies": {
+    "nodemailer": "^6.9.13",
+    "openai": "^4.47.1"
+  }
+}
