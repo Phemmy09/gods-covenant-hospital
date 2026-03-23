@@ -37,6 +37,9 @@ HOSPITAL INFORMATION:
 - Phone: 08033254690
 - WhatsApp: +2348033254690
 - Emergency: 24 hours / 7 days a week
+- Established: February 1, 2001 (25+ years of service)
+- Over 28,000 patients served; over 2,250 safe deliveries
+- Website launched ~2016
 
 SERVICES OFFERED:
 - General Medical Services (GP consultations, diagnosis, treatment)
@@ -65,9 +68,13 @@ ANTENATAL CLINIC:
 - Walk-ins welcome from 9:00am
 - Registration Fee: ₦20,000
 - Includes: Lectures by qualified health professionals, prayer sessions for expectant mothers,
-  Q&A with medical team, ultrasound scan to confirm baby's well-being,
+  Q&A with medical team, ultrasound scan for ALL antenatal patients at EVERY visit to confirm baby's well-being,
   Electronic Medical Records (EMR) for easy follow-up,
   each pregnant woman seen by a Medical Doctor after nurse/midwife check
+
+CONSULTATION HOURS:
+- Daily: 9:00am – 2:00pm & 6:00pm – 9:00pm (Monday to Sunday, every day)
+- Emergency: 24 hours a day, 7 days a week
 
 ACCREDITATIONS:
 - HEFAMAA (Health Facility Monitoring & Accreditation Agency) — Lagos State Ministry of Health
