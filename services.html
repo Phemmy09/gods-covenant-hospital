@@ -504,6 +504,7 @@
 <!-- CHATBOT -->
 <button class="chatbot-fab chatbot-fab-pulse" id="chatFab" aria-label="Open chat">
   <i class="fas fa-comment-medical"></i>
+  <span class="fab-label">Chat with Us</span>
   <span class="fab-notif">1</span>
 </button>
 <div class="chatbot-panel" id="chatbotPanel">
@@ -526,22 +527,38 @@
   <div class="chat-body" id="chatBody" style="display:none">
   <div class="chat-messages" id="chatMessages"></div>
   <div class="chat-form-area" id="chatFormArea">
-    <h4>📋 Quick Contact Form</h4>
-    <form id="chatContactForm">
-      <input type="text" name="chat_name" class="chat-field" placeholder="Your full name *" required>
-      <input type="email" name="chat_email" class="chat-field" placeholder="Email address">
-      <input type="tel" name="chat_phone" class="chat-field" placeholder="Phone number *" required>
-      <input type="text" name="chat_address" class="chat-field" placeholder="Your address (optional)">
-      <select name="chat_inquiry" class="chat-field">
-        <option value="">Select inquiry type...</option>
-        <option value="Book Appointment">Book an Appointment</option>
-        <option value="Antenatal Registration">Antenatal Registration</option>
-        <option value="General Inquiry">General Inquiry</option>
-        <option value="Emergency">Emergency Inquiry</option>
-        <option value="HMO / Insurance">HMO / Insurance</option>
-        <option value="Other">Other</option>
-      </select>
-      <button type="submit" class="chat-send-btn"><i class="fas fa-paper-plane"></i> Send Message</button>
+    <h4>📋 Tell us about yourself</h4>
+    <form id="chatContactForm" autocomplete="off">
+      <div class="chat-field-group">
+        <label class="chat-field-label">Full Name <span class="req">*</span></label>
+        <input type="text" name="chat_name" class="chat-field" placeholder="e.g. Amaka Okonkwo" required>
+      </div>
+      <div class="chat-field-group">
+        <label class="chat-field-label">Email Address <span class="opt">(optional)</span></label>
+        <input type="email" name="chat_email" class="chat-field" placeholder="e.g. amaka@email.com">
+      </div>
+      <div class="chat-field-group">
+        <label class="chat-field-label">Phone Number <span class="req">*</span></label>
+        <input type="tel" name="chat_phone" class="chat-field" placeholder="e.g. 08033254690" required>
+      </div>
+      <div class="chat-field-group">
+        <label class="chat-field-label">Address <span class="opt">(optional)</span></label>
+        <input type="text" name="chat_address" class="chat-field" placeholder="Your area or street">
+      </div>
+      <div class="chat-field-group">
+        <label class="chat-field-label">What can we help you with?</label>
+        <select name="chat_inquiry" class="chat-field">
+          <option value="">Select inquiry type...</option>
+          <option value="Book Appointment">Book an Appointment</option>
+          <option value="Antenatal Registration">Antenatal Registration</option>
+          <option value="General Inquiry">General Inquiry</option>
+          <option value="Emergency">Emergency Inquiry</option>
+          <option value="HMO / Insurance">HMO / Insurance</option>
+          <option value="Consultation Fees">Consultation Fees</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <button type="submit" class="chat-send-btn"><i class="fas fa-paper-plane"></i> Start Conversation</button>
     </form>
   </div>
   <div class="chat-live-area" id="chatLiveInput">

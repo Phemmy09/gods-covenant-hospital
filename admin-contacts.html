@@ -81,6 +81,31 @@
     .login-hint { margin-top: 16px; font-size: 0.78rem; color: #94A3B8; }
     .back-link { display: inline-flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 20px; text-decoration: none; transition: color 0.2s; }
     .back-link:hover { color: white; }
+
+    /* Chat history modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: white; border-radius: 20px; width: 100%; max-width: 560px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.3); overflow: hidden; }
+    .modal-header { background: #1E2D40; color: white; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .modal-header h3 { font-size: 0.95rem; font-weight: 700; margin: 0; }
+    .modal-header p { font-size: 0.78rem; opacity: 0.6; margin: 3px 0 0; }
+    .modal-close { background: none; border: none; color: white; opacity: 0.6; font-size: 1.2rem; cursor: pointer; padding: 4px; }
+    .modal-close:hover { opacity: 1; }
+    .modal-body { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: #F1F5F9; flex: 1; }
+    .modal-contact-bar { background: white; border-radius: 10px; padding: 14px 16px; border: 1px solid #E2E8F0; font-size: 0.84rem; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex-shrink: 0; }
+    .modal-contact-bar span { color: #64748B; }
+    .modal-contact-bar strong { color: #1E2D40; }
+    .chat-log-msg { max-width: 85%; }
+    .chat-log-msg.bot { align-self: flex-start; }
+    .chat-log-msg.user { align-self: flex-end; }
+    .chat-log-bubble { padding: 10px 14px; border-radius: 14px; font-size: 0.875rem; line-height: 1.55; }
+    .chat-log-msg.bot .chat-log-bubble { background: white; color: #1E293B; border-bottom-left-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .chat-log-msg.user .chat-log-bubble { background: #E8722A; color: white; border-bottom-right-radius: 3px; }
+    .chat-log-time { font-size: 0.68rem; color: #94A3B8; margin-top: 3px; padding: 0 4px; }
+    .chat-log-msg.user .chat-log-time { text-align: right; }
+    .modal-footer { padding: 14px 20px; border-top: 1px solid #E2E8F0; background: white; flex-shrink: 0; text-align: right; }
+    .view-chat-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: #EAF9F8; color: #3AADA6; border: none; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .view-chat-btn:hover { background: #3AADA6; color: white; }
   </style>
 </head>
 <body>
@@ -158,12 +183,20 @@
           <div class="lbl">Chat Inquiries</div>
         </div>
       </div>
+      <div class="admin-stat-card">
+        <div class="stat-icon-circle teal"><i class="fas fa-history"></i></div>
+        <div class="stat-text">
+          <div class="num" id="stat-histories">0</div>
+          <div class="lbl">Chat Histories Saved</div>
+        </div>
+      </div>
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('contacts')"><i class="fas fa-users" style="margin-right:6px"></i> All Contacts &amp; Reviews</button>
       <button class="tab-btn" onclick="switchTab('reviews')"><i class="fas fa-star" style="margin-right:6px"></i> Reviews Only</button>
+      <button class="tab-btn" onclick="switchTab('histories')"><i class="fas fa-comments" style="margin-right:6px"></i> Chat Histories</button>
     </div>
 
     <!-- All Contacts Tab -->
@@ -202,6 +235,7 @@
                 <th>Message / Inquiry</th>
                 <th>Source</th>
                 <th>Rating</th>
+                <th>Chat</th>
               </tr>
             </thead>
             <tbody id="contactsTableBody">
@@ -256,6 +290,44 @@
       </div>
     </div>
 
+    <!-- Chat Histories Tab -->
+    <div id="tab-histories" class="tab-panel">
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h2><i class="fas fa-comments" style="color:#E8722A;margin-right:6px"></i> Full Chat Histories</h2>
+          <div class="admin-actions">
+            <button id="clearHistoriesBtn" class="admin-btn admin-btn-danger"><i class="fas fa-trash"></i> Clear All Histories</button>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Date &amp; Time</th>
+                <th>Patient Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Inquiry Type</th>
+                <th>Messages</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="historiesTableBody">
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <h3>No chat histories yet</h3>
+                    <p>Full conversations from the chatbot will appear here after they end.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Instructions -->
     <div style="background:#1E2D40;border-radius:16px;padding:28px;color:white;margin-top:8px">
       <h3 style="color:white;margin-bottom:16px;font-size:1rem"><i class="fas fa-info-circle" style="color:#E8722A;margin-right:8px"></i> How This Works</h3>
@@ -290,17 +362,41 @@
   </div>
 </div>
 
+<!-- Chat History Modal -->
+<div class="modal-overlay" id="chatModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalPatientName">Chat with —</h3>
+        <p id="modalTimestamp"></p>
+      </div>
+      <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-contact-bar" id="modalContactBar"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="admin-btn admin-btn-secondary" id="modalClose2"><i class="fas fa-times" style="margin-right:5px"></i> Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="script.js"></script>
 <script>
-  // Tab switching
+  function esc(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Tab switching ────────────────────────────────────────
   function switchTab(name) {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     event.target.classList.add('active');
     if (name === 'reviews') renderReviewsTab();
+    if (name === 'histories') renderHistoriesTab();
   }
 
+  // ── Reviews tab ──────────────────────────────────────────
   function renderReviewsTab() {
     const reviews = JSON.parse(localStorage.getItem('gch_reviews') || '[]').sort((a,b) => b.id - a.id);
     const tbody = document.getElementById('reviewsTableBody');
@@ -320,14 +416,74 @@
     `).join('');
   }
 
-  function esc(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // ── Chat Histories tab ───────────────────────────────────
+  function renderHistoriesTab() {
+    const histories = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]').sort((a,b) => b.id - a.id);
+    const tbody = document.getElementById('historiesTableBody');
+    if (!tbody) return;
+    if (histories.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-comments"></i><h3>No chat histories yet</h3><p>Full conversations will appear here after they end.</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = histories.map((h, idx) => `
+      <tr>
+        <td>${new Date(h.timestamp).toLocaleDateString()}<br><small style="color:#94A3B8">${new Date(h.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</small></td>
+        <td><strong>${esc(h.contact?.name||'—')}</strong></td>
+        <td>${esc(h.contact?.phone||'—')}</td>
+        <td>${esc(h.contact?.email||'—')}</td>
+        <td>${esc(h.contact?.inquiry||'—')}</td>
+        <td><span style="background:#EAF9F8;color:#3AADA6;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700">${h.conversation?.length||0} messages</span></td>
+        <td><button class="view-chat-btn" onclick="openChatModal(${idx})"><i class="fas fa-eye"></i> View Chat</button></td>
+      </tr>
+    `).join('');
   }
 
-  // Live search & filter
+  // ── Chat modal ───────────────────────────────────────────
+  function openChatModal(idx) {
+    const histories = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]').sort((a,b) => b.id - a.id);
+    const h = histories[idx];
+    if (!h) return;
+
+    document.getElementById('modalPatientName').textContent = 'Chat with ' + (h.contact?.name || '—');
+    document.getElementById('modalTimestamp').textContent = new Date(h.timestamp).toLocaleString();
+    document.getElementById('modalContactBar').innerHTML = `
+      <div><span>Phone: </span><strong>${esc(h.contact?.phone||'—')}</strong></div>
+      <div><span>Email: </span><strong>${esc(h.contact?.email||'—')}</strong></div>
+      <div><span>Address: </span><strong>${esc(h.contact?.address||'—')}</strong></div>
+      <div><span>Inquiry: </span><strong>${esc(h.contact?.inquiry||'—')}</strong></div>
+    `;
+
+    const body = document.getElementById('modalBody');
+    body.innerHTML = (h.conversation || []).map(m => `
+      <div class="chat-log-msg ${m.role === 'user' ? 'user' : 'bot'}">
+        <div class="chat-log-bubble">${esc(m.content).replace(/\n/g,'<br>')}</div>
+        <div class="chat-log-time">${m.role === 'user' ? esc(h.contact?.name||'Patient') : 'GCH Assistant'}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('chatModal').classList.add('open');
+    setTimeout(() => { body.scrollTop = body.scrollHeight; }, 50);
+  }
+
+  function closeChatModal() {
+    document.getElementById('chatModal').classList.remove('open');
+  }
+
+  document.getElementById('modalClose').addEventListener('click', closeChatModal);
+  document.getElementById('modalClose2').addEventListener('click', closeChatModal);
+  document.getElementById('chatModal').addEventListener('click', function(e) {
+    if (e.target === this) closeChatModal();
+  });
+
+  // ── Live search & filter ─────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const sourceFilter = document.getElementById('sourceFilter');
+
+    // Update histories stat
+    const histories = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]');
+    const statH = document.getElementById('stat-histories');
+    if (statH) statH.textContent = histories.length;
 
     function filterTable() {
       const q = (searchInput?.value || '').toLowerCase();
@@ -348,6 +504,19 @@
 
     if (searchInput) searchInput.addEventListener('input', filterTable);
     if (sourceFilter) sourceFilter.addEventListener('change', filterTable);
+
+    // Clear histories button
+    const clearHistBtn = document.getElementById('clearHistoriesBtn');
+    if (clearHistBtn) {
+      clearHistBtn.addEventListener('click', () => {
+        if (confirm('Delete ALL chat histories? This cannot be undone.')) {
+          localStorage.removeItem('gch_chat_histories');
+          renderHistoriesTab();
+          const s = document.getElementById('stat-histories');
+          if (s) s.textContent = '0';
+        }
+      });
+    }
   });
 </script>
 </body>

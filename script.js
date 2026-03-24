@@ -205,30 +205,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const todayEl = document.getElementById('stat-today');
     const reviewsEl = document.getElementById('stat-reviews');
     const chatEl = document.getElementById('stat-chat');
+    const histEl = document.getElementById('stat-histories');
     if (totalEl) totalEl.textContent = all.length;
     const today = new Date().toDateString();
     if (todayEl) todayEl.textContent = all.filter(x => new Date(x.timestamp).toDateString() === today).length;
     if (reviewsEl) reviewsEl.textContent = reviews.length;
     if (chatEl) chatEl.textContent = contacts.filter(x => x.source === 'chatbot').length;
+    if (histEl) histEl.textContent = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]').length;
 
     // Contacts table
     const tbody = document.getElementById('contactsTableBody');
     if (tbody) {
       if (all.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:#64748B">No contacts yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#64748B">No contacts yet.</td></tr>';
       } else {
-        tbody.innerHTML = all.map(c => `
+        // Build a lookup of chat histories by contact phone for quick matching
+        const histories = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]');
+        tbody.innerHTML = all.map(c => {
+          // Find a matching chat history by phone
+          const histIdx = histories.sort((a,b) => b.id - a.id)
+            .findIndex(h => h.contact?.phone === c.phone);
+          const chatBtn = (c.source === 'chatbot' && histIdx !== -1)
+            ? `<button class="view-chat-btn" onclick="openChatModal(${histIdx})"><i class="fas fa-eye"></i> View</button>`
+            : (c.source === 'chatbot' ? '<span style="color:#94A3B8;font-size:0.75rem">Pending</span>' : '—');
+          return `
           <tr>
             <td>${new Date(c.timestamp).toLocaleDateString()}<br><small style="color:#94A3B8">${new Date(c.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</small></td>
             <td><strong>${escapeHtml(c.name || '—')}</strong></td>
-            <td>${escapeHtml(c.email || '—')}</td>
             <td>${escapeHtml(c.phone || '—')}</td>
+            <td>${escapeHtml(c.email || '—')}</td>
             <td>${escapeHtml(c.address || '—')}</td>
             <td style="max-width:200px">${escapeHtml((c.inquiry || c.review || '—').substring(0,100))}${((c.inquiry || c.review || '').length > 100) ? '…' : ''}</td>
             <td><span style="background:${c.source==='chatbot'?'#FFF4EE;color:#E8722A':c.source==='review-page'?'#EAF9F8;color:#3AADA6':'#F1F5F9;color:#475569'};padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600">${c.source || 'contact'}</span></td>
             <td>${c.rating ? '★'.repeat(parseInt(c.rating)) : '—'}</td>
-          </tr>
-        `).join('');
+            <td>${chatBtn}</td>
+          </tr>`;
+        }).join('');
       }
     }
   }

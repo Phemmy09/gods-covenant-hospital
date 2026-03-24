@@ -161,10 +161,28 @@
     }
   }
 
+  // ── Save chat history to localStorage for admin log ─────
+  function saveChatHistory() {
+    if (!contactInfo || conversationHistory.length === 0) return;
+    try {
+      const histories = JSON.parse(localStorage.getItem('gch_chat_histories') || '[]');
+      histories.push({
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        contact: contactInfo,
+        conversation: conversationHistory,
+      });
+      localStorage.setItem('gch_chat_histories', JSON.stringify(histories));
+    } catch (e) { console.warn('Could not save chat history:', e); }
+  }
+
   // ── Send conversation summary to n8n for email ──────────
   async function sendConversationSummary() {
     if (!contactInfo || conversationHistory.length === 0 || summarySent) return;
     summarySent = true;
+
+    // Save to localStorage so admin page can display it
+    saveChatHistory();
 
     const summaryText = conversationHistory.map(m =>
       `${m.role === 'user' ? contactInfo.name : 'GCH Assistant'}: ${m.content}`
@@ -185,7 +203,6 @@
         body: JSON.stringify(payload),
       });
     } catch (err) {
-      // Use sendBeacon as fallback
       if (navigator.sendBeacon) {
         navigator.sendBeacon(N8N_WEBHOOK, JSON.stringify(payload));
       }
