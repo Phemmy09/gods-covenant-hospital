@@ -65,7 +65,7 @@ REGISTRATION FEES:
 ANTENATAL CLINIC:
 - Day: Every Tuesday
 - Time: 7:30am – 12:00pm
-- Walk-ins welcome from 9:00am
+- Patients welcome from 7:30am; Doctor consultations start from 9:00am
 - Registration Fee: ₦20,000
 - Includes: Lectures by qualified health professionals, prayer sessions for expectant mothers,
   Q&A with medical team, ultrasound scan for ALL antenatal patients at EVERY visit to confirm baby's well-being,
