@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery — God's Covenant Hospital</title>
+  <meta name="description" content="Explore photos and moments from God's Covenant Hospital — our facilities, dedicated team, and celebrations in Oworonsoki, Lagos.">
+  <link rel="icon" href="saveweb2zip-com-godscovenanthospital-com/images/cropped-WhatsApp_Image_2025-12-27_at_5.30.32_PM-removebg-preview-77x77.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ── Gallery Page Styles ── */
+    .gallery-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #2a4060 60%, var(--teal-dark, #2a9d8f) 100%);
+      padding: 120px 0 70px;
+      position: relative;
+      overflow: hidden;
+    }
+    .gallery-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(232,114,42,0.18) 0%, transparent 65%),
+                  radial-gradient(ellipse at 20% 80%, rgba(77,200,192,0.15) 0%, transparent 60%);
+    }
+    .gallery-hero .container { position: relative; z-index: 1; }
+
+    /* ── Filter Tabs ── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 48px 0 40px;
+    }
+    .filter-btn {
+      padding: 10px 24px;
+      border-radius: 50px;
+      border: 2px solid transparent;
+      background: var(--bg-light);
+      color: var(--text-light);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+    .filter-btn:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: var(--orange-light);
+    }
+    .filter-btn.active {
+      background: var(--orange);
+      color: white;
+      border-color: var(--orange);
+      box-shadow: 0 4px 16px rgba(232,114,42,0.35);
+    }
+
+    /* ── Masonry Grid ── */
+    .masonry-grid {
+      columns: 4;
+      column-gap: 16px;
+      padding: 0 0 40px;
+    }
+    @media (max-width: 1100px) { .masonry-grid { columns: 3; } }
+    @media (max-width: 720px)  { .masonry-grid { columns: 2; } }
+    @media (max-width: 480px)  { .masonry-grid { columns: 1; } }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gallery-item:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,0.18); }
+    .gallery-item.hidden { display: none; }
+
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+
+    .gallery-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(30,45,64,0.85) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+    }
+    .gallery-item:hover .gallery-item-overlay { opacity: 1; }
+    .gallery-item-caption {
+      color: white;
+      font-size: 0.88rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .gallery-item-zoom {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(6px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-item:hover .gallery-item-zoom { opacity: 1; }
+
+    /* ── Category Badge ── */
+    .gallery-item-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover .gallery-item-badge { opacity: 1; }
+    .badge-hospital  { background: rgba(77,200,192,0.85); color: #fff; }
+    .badge-team      { background: rgba(30,45,64,0.85);   color: #fff; }
+    .badge-dr-dare   { background: rgba(232,114,42,0.9);  color: #fff; }
+    .badge-celebrate { background: rgba(218,55,88,0.85);  color: #fff; }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(10,14,22,0.96);
+      align-items: center;
+      justify-content: center;
+      animation: lbFadeIn 0.25s ease;
+    }
+    .lightbox.open { display: flex; }
+    @keyframes lbFadeIn { from { opacity:0 } to { opacity:1 } }
+
+    .lb-inner {
+      position: relative;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .lb-img-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lb-img-wrap img {
+      max-width: 88vw;
+      max-height: 78vh;
+      border-radius: 14px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      object-fit: contain;
+      animation: lbImgIn 0.2s ease;
+    }
+    @keyframes lbImgIn { from { transform:scale(0.94); opacity:0 } to { transform:scale(1); opacity:1 } }
+
+    .lb-caption {
+      margin-top: 18px;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .lb-counter {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.78rem;
+      margin-top: 6px;
+    }
+
+    .lb-close {
+      position: fixed;
+      top: 20px; right: 24px;
+      width: 46px; height: 46px;
+      background: rgba(255,255,255,0.1);
+      border: none; border-radius: 50%;
+      color: white; font-size: 1.2rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lb-close:hover { background: var(--orange); }
+
+    .lb-nav {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.1);
+      border: none; border-radius: 50%;
+      color: white; font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lb-nav:hover { background: var(--orange); }
+    .lb-prev { left: 20px; }
+    .lb-next { right: 20px; }
+    @media (max-width: 600px) {
+      .lb-prev { left: 8px; } .lb-next { right: 8px; }
+      .lb-nav { width: 40px; height: 40px; font-size: 0.9rem; }
+    }
+
+    /* ── Video Cards in Masonry ── */
+    .gallery-item.video-item video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 0;
+    }
+    .gallery-item.video-item .video-play-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(30,45,64,0.45);
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .gallery-item.video-item .video-play-icon i {
+      font-size: 3rem;
+      color: white;
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5));
+      transition: transform 0.25s;
+    }
+    .gallery-item.video-item:hover .video-play-icon { opacity: 0; }
+
+    /* ── Video Section ── */
+    .video-section {
+      background: var(--navy);
+      padding: 80px 0;
+    }
+    .video-section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .video-section-header h2 { color: white; }
+    .video-section-header p  { color: rgba(255,255,255,0.6); }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .video-placeholder {
+      background: rgba(255,255,255,0.05);
+      border: 2px dashed rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 48px 24px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .video-placeholder:hover {
+      border-color: var(--orange);
+      background: rgba(232,114,42,0.06);
+      color: rgba(255,255,255,0.65);
+    }
+    .video-placeholder i { font-size: 2.5rem; margin-bottom: 16px; color: var(--orange); opacity: 0.7; }
+    .video-placeholder p { font-size: 0.9rem; margin: 0; }
+    .video-placeholder strong { display: block; margin-bottom: 6px; font-size: 1rem; color: rgba(255,255,255,0.7); }
+
+    /* Stats band */
+    .gallery-stats {
+      background: var(--orange);
+      padding: 28px 0;
+    }
+    .gallery-stats-inner {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .gs-item { text-align: center; color: white; }
+    .gs-num { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .gs-label { font-size: 0.8rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="index.html" class="navbar-logo">
+      <img src="saveweb2zip-com-godscovenanthospital-com/images/cropped-WhatsApp_Image_2025-12-27_at_5.30.32_PM-removebg-preview.png" alt="God's Covenant Hospital Logo">
+      <div class="navbar-logo-text">
+        <strong>GOD'S COVENANT</strong>
+        <span>Hospital &amp; Maternity</span>
+      </div>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="gallery.html" class="active">Gallery</a>
+      <a href="contact.html">Contact</a>
+      <a href="review.html">Reviews</a>
+    </div>
+    <div class="navbar-right">
+      <a href="tel:08095227244" class="navbar-phone-link">
+        <span class="navbar-phone-icon"><i class="fas fa-phone"></i></span>
+        08095227244
+      </a>
+      <a href="https://wa.me/2348033254690?text=Hello%2C+I+need+medical+assistance" target="_blank" class="btn btn-primary btn-sm">
+        <i class="fab fa-whatsapp"></i> Contact Us
+      </a>
+    </div>
+    <button class="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="services.html">Services</a>
+    <a href="about.html">About Us</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact</a>
+    <a href="review.html">Drop a Review</a>
+    <a href="https://wa.me/2348033254690" target="_blank" class="btn btn-primary"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="gallery-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html" style="color:rgba(255,255,255,0.6)">Home</a>
+      <span class="breadcrumb-sep" style="color:rgba(255,255,255,0.4)"><i class="fas fa-chevron-right" style="font-size:0.7rem"></i></span>
+      <span style="color:white">Gallery</span>
+    </div>
+    <div class="label-tag" style="margin-top:16px"><i class="fas fa-images"></i> Photo Gallery</div>
+    <h1 style="color:white;margin-top:12px">Moments at God's Covenant Hospital</h1>
+    <p style="color:rgba(255,255,255,0.7);max-width:560px">A glimpse into our hospital, our wonderful team, and the moments that define 25+ years of compassionate care.</p>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="gallery-stats">
+  <div class="container">
+    <div class="gallery-stats-inner">
+      <div class="gs-item"><div class="gs-num">30+</div><div class="gs-label">Photos</div></div>
+      <div class="gs-item"><div class="gs-num">25+</div><div class="gs-label">Years of Service</div></div>
+      <div class="gs-item"><div class="gs-num">2,250+</div><div class="gs-label">Safe Deliveries</div></div>
+      <div class="gs-item"><div class="gs-num">28,000+</div><div class="gs-label">Patients Served</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY SECTION -->
+<section class="section" style="background:#f9f7f5;padding-bottom:60px">
+  <div class="container">
+
+    <!-- Filter Buttons -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all"><i class="fas fa-border-all" style="margin-right:6px"></i> All Photos</button>
+      <button class="filter-btn" data-filter="hospital"><i class="fas fa-hospital" style="margin-right:6px"></i> Hospital</button>
+      <button class="filter-btn" data-filter="team"><i class="fas fa-users" style="margin-right:6px"></i> Our Team</button>
+      <button class="filter-btn" data-filter="dr-dare"><i class="fas fa-user-md" style="margin-right:6px"></i> Dr. Dare</button>
+      <button class="filter-btn" data-filter="celebrate"><i class="fas fa-star" style="margin-right:6px"></i> Celebrations</button>
+    </div>
+
+    <!-- Masonry Grid -->
+    <div class="masonry-grid" id="masonryGrid">
+
+      <!-- HOSPITAL -->
+      <div class="gallery-item" data-category="hospital" data-caption="Our Hospital Ward" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital ward.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital ward.jpeg" alt="GCH Hospital Ward" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Hospital Ward</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-hospital">Hospital</div>
+      </div>
+
+      <div class="gallery-item" data-category="hospital" data-caption="Our Welcoming Reception" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital recetionist.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital recetionist.jpeg" alt="GCH Reception" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Welcoming Reception</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-hospital">Hospital</div>
+      </div>
+
+      <div class="gallery-item" data-category="hospital" data-caption="Hospital Facilities" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.10.21-AM.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.10.21-AM.jpeg" alt="Hospital Facilities" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Hospital Facilities</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-hospital">Hospital</div>
+      </div>
+
+      <div class="gallery-item" data-category="hospital" data-caption="Hospital Facilities" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg" alt="Hospital Facilities" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Hospital Facilities</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-hospital">Hospital</div>
+      </div>
+
+      <div class="gallery-item" data-category="hospital" data-caption="Quality Medical Care" data-src="saveweb2zip-com-godscovenanthospital-com/images/pexels-photo-30677591-30677591-2-1.jpg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/pexels-photo-30677591-30677591-2-1.jpg" alt="Medical Care" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Quality Medical Care</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-hospital">Hospital</div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="gallery-item" data-category="team" data-caption="Our Dedicated Team" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg" alt="GCH Staff Team" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Dedicated Team</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Our Nursing Team" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital women workers.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital women workers.jpeg" alt="GCH Women Staff" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Nursing Team</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Staff in Traditional Attire" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg" alt="GCH Staff in Natives" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff in Traditional Attire</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Staff at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg" alt="GCH Staff Occasion" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff at an Occasion</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Mr Omotayo Olaiya — Hospital Manager" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.45-PM.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.45-PM.jpeg" alt="Hospital Manager" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Mr Omotayo Olaiya — Hospital Manager</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Mrs Abiola Anita Dare — Executive Director" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.45-PM-1.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.45-PM-1.jpeg" alt="Mrs Abiola Anita Dare" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Mrs Abiola Anita Dare — Executive Director</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Hospital Administration" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM.jpeg" alt="Hospital Administration" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Hospital Administration</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Our Dedicated Staff" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM-1.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM-1.jpeg" alt="GCH team in uniform" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Dedicated Staff</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Doctor Consultation" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM.jpeg" alt="Doctor Consultation" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Doctor Consultation</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Medical Team at Work" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-1.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-1.jpeg" alt="Medical Team" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Medical Team at Work</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Quality Medical Care" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-2.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-2.jpeg" alt="Medical Consultation" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Quality Medical Care</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <div class="gallery-item" data-category="team" data-caption="Training the Next Generation" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare with trainee.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare with trainee.jpeg" alt="Dr Dare with Trainee" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Training the Next Generation</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-team">Team</div>
+      </div>
+
+      <!-- DR. DARE -->
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Festus Olawale Dare — Medical Director &amp; CEO" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare headshot.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare headshot.jpeg" alt="Dr Festus Dare" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Festus Olawale Dare — Medical Director &amp; CEO</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare in Suit" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in suit.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in suit.jpeg" alt="Dr Festus Dare in Suit" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare in Suit</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare in Grand Style" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in grand style.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in grand style.jpeg" alt="Dr Dare in Grand Style" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare in Grand Style</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare in Fine Native Attire" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in a fine native attire.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in a fine native attire.jpeg" alt="Dr Dare in Native Attire" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare in Fine Native Attire</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion.jpeg" alt="Dr Dare at Occasion" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare at an Occasion</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion 2.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion 2.jpeg" alt="Dr Dare at Occasion" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare at an Occasion</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg" alt="Dr Dare at Occasion" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare at an Occasion</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="The Early Days — Dr Dare with Early Staff" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare with old workers at the early stages.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare with old workers at the early stages.jpeg" alt="Dr Dare Early Days" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">The Early Days — Dr Dare with Early Staff</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare — Earlier Years" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare headshot old.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare headshot old.jpeg" alt="Dr Dare Earlier" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare — Earlier Years</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
+      </div>
+
+      <!-- VIDEO CARD -->
+      <div class="gallery-item video-item" data-category="celebrate" style="cursor:default">
+        <video controls preload="metadata" style="width:100%;height:auto;display:block;border-radius:0" poster="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration.jpeg">
+          <source src="saveweb2zip-com-godscovenanthospital-com/images/Happy birthday song rendered for Dr Festus Olawale Dare.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <div class="gallery-item-badge badge-celebrate" style="opacity:1">🎬 Video</div>
+        <div class="gallery-item-overlay" style="pointer-events:none">
+          <div class="gallery-item-caption">🎂 Happy Birthday — Dr Festus Olawale Dare</div>
+        </div>
+      </div>
+
+      <!-- CELEBRATIONS -->
+      <div class="gallery-item" data-category="celebrate" data-caption="Hospital Birthday Celebration" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital Birthday celebration.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital Birthday celebration.jpeg" alt="GCH Birthday Celebration" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Hospital Birthday Celebration</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-celebrate">Celebration</div>
+      </div>
+
+      <div class="gallery-item" data-category="celebrate" data-caption="Presentation of Gifts" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital presentation of gifts.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital presentation of gifts.jpeg" alt="Gift Presentation" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Presentation of Gifts</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-celebrate">Celebration</div>
+      </div>
+
+      <div class="gallery-item" data-category="celebrate" data-caption="Staff Celebration in Native Style" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg" alt="Staff Celebration" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff Celebration in Native Style</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-celebrate">Celebration</div>
+      </div>
+
+      <div class="gallery-item" data-category="celebrate" data-caption="Dr Dare Birthday Celebration" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration.jpeg" alt="Dr Dare Birthday" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare Birthday Celebration</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-celebrate">Celebration</div>
+      </div>
+
+      <div class="gallery-item" data-category="celebrate" data-caption="Dr Dare Birthday Celebration" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration-2.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration-2.jpeg" alt="Dr Dare Birthday" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare Birthday Celebration</div></div>
+        <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
+        <div class="gallery-item-badge badge-celebrate">Celebration</div>
+      </div>
+
+    </div><!-- end masonry-grid -->
+  </div>
+</section>
+
+<!-- VIDEO SECTION -->
+<section class="video-section">
+  <div class="container">
+    <div class="video-section-header fade-up">
+      <div class="label-tag" style="background:rgba(232,114,42,0.2);color:var(--orange);margin:0 auto 16px"><i class="fas fa-video"></i> Videos</div>
+      <h2>God's Covenant Hospital in Motion</h2>
+      <p>Videos will appear here as they are added. Check back soon!</p>
+    </div>
+    <div class="video-grid fade-up">
+
+      <!-- Real video -->
+      <div style="border-radius:16px;overflow:hidden;background:#000;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+        <video controls preload="metadata" style="width:100%;display:block;max-height:340px;object-fit:contain;background:#000"
+               poster="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare birthday celebration.jpeg">
+          <source src="saveweb2zip-com-godscovenanthospital-com/images/Happy birthday song rendered for Dr Festus Olawale Dare.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+        <div style="padding:16px 20px;background:rgba(255,255,255,0.05)">
+          <p style="color:white;font-weight:700;margin:0 0 4px">🎂 Happy Birthday — Dr Festus Olawale Dare</p>
+          <p style="color:rgba(255,255,255,0.5);font-size:0.83rem;margin:0">A special birthday tribute to our Medical Director &amp; CEO</p>
+        </div>
+      </div>
+
+      <!-- Placeholders for future videos -->
+      <div class="video-placeholder">
+        <i class="fas fa-video"></i>
+        <strong>Hospital Tour</strong>
+        <p>A walkthrough of our facilities and wards — coming soon</p>
+      </div>
+      <div class="video-placeholder">
+        <i class="fas fa-baby"></i>
+        <strong>Antenatal Clinic</strong>
+        <p>See what happens every Tuesday — coming soon</p>
+      </div>
+    </div>
+    <p style="text-align:center;color:rgba(255,255,255,0.35);font-size:0.8rem;margin-top:32px">
+      <i class="fas fa-info-circle" style="margin-right:6px"></i>More videos will be added here as they are uploaded.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <img class="cta-banner-bg" src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM-1.jpeg" alt="GCH team">
+  <div class="cta-banner-overlay"></div>
+  <div class="container">
+    <div class="fade-up">
+      <h2>Join Our Story</h2>
+      <p>We've been serving families for 25+ years. Let us take care of yours.</p>
+      <div class="cta-actions">
+        <a href="https://wa.me/2348033254690?text=Hello%2C+I+need+medical+assistance" target="_blank" class="btn btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+        <a href="contact.html" class="btn btn-outline-white"><i class="fas fa-envelope"></i> Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo-wrap">
+          <img src="saveweb2zip-com-godscovenanthospital-com/images/cropped-WhatsApp_Image_2025-12-27_at_5.30.32_PM-removebg-preview.png" alt="GCH Logo">
+          <span>GOD'S COVENANT<br>HOSPITAL</span>
+        </div>
+        <p>Trusted, affordable, and compassionate healthcare for individuals and families in Oworonsoki, Lagos.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
+          <a href="https://wa.me/2348033254690" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="services.html">Our Services</a>
+          <a href="about.html">About Us</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="contact.html">Contact</a>
+          <a href="review.html">Drop a Review</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <div class="footer-links">
+          <a href="services.html">Antenatal Care</a>
+          <a href="services.html">Immunization</a>
+          <a href="services.html">Surgical Services</a>
+          <a href="services.html">Family Planning</a>
+          <a href="services.html">General Medical</a>
+          <a href="services.html">Lab &amp; Ultrasound</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item">
+          <i class="fas fa-map-marker-alt f-contact-icon"></i>
+          <div class="f-contact-text">No 13, Oworo Road, Pako Bus Stop, Oworonsoki, Lagos</div>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fas fa-phone f-contact-icon"></i>
+          <div class="f-contact-text"><a href="tel:08095227244">08095227244</a> (Hospital) | <a href="tel:08055229498">08055229498</a> (Manager)<br><small style="opacity:0.65"><i class="fab fa-whatsapp"></i> WhatsApp: <a href="https://wa.me/2348033254690">08033254690</a></small></div>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fas fa-envelope f-contact-icon"></i>
+          <div class="f-contact-text"><a href="mailto:godscovenanthospital@yahoo.com">godscovenanthospital@yahoo.com</a></div>
+        </div>
+        <div class="footer-hours">
+          <div class="hours-row"><span>Mon – Fri</span><span>9:00AM – 5:00PM</span></div>
+          <div class="hours-row"><span>Sat – Sun</span><span>10:00AM – 6:00PM</span></div>
+          <div class="hours-row"><span>Emergency</span><span style="color:var(--orange);font-weight:600">24 Hours</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 God's Covenant Hospital. All rights reserved.</p>
+      <p><a href="admin-contacts.html">Admin</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lb-close" id="lbClose" aria-label="Close"><i class="fas fa-times"></i></button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lbImg" src="" alt="">
+    </div>
+    <div class="lb-caption" id="lbCaption"></div>
+    <div class="lb-counter" id="lbCounter"></div>
+  </div>
+</div>
+
+<!-- CHATBOT -->
+<button class="chatbot-fab chatbot-fab-pulse" id="chatFab" aria-label="Open chat">
+  <i class="fas fa-comment-medical"></i>
+  <span class="fab-label">Chat with Us</span>
+  <span class="fab-notif">1</span>
+</button>
+<div class="chatbot-panel" id="chatbotPanel">
+  <div class="chat-header">
+    <div class="chat-header-left">
+      <div class="chat-avatar-circle">GC</div>
+      <div class="chat-header-text">
+        <strong>God's Covenant Hospital</strong>
+        <span class="chat-online"><span class="chat-online-dot"></span> Online now</span>
+      </div>
+    </div>
+    <button class="chat-close-btn"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-welcome-screen" id="chatWelcomeScreen">
+    <div class="chat-welcome-icon"><i class="fas fa-hospital-user"></i></div>
+    <strong>God's Covenant Hospital Assistant</strong>
+    <p>Hello! 👋 I can help with appointments, fees, services, antenatal, HMO, and more.</p>
+    <button class="chat-start-btn" id="chatStartBtn"><i class="fas fa-comment-dots"></i> Start Chat</button>
+  </div>
+  <div class="chat-body" id="chatBody" style="display:none">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-form-area" id="chatFormArea">
+      <h4>📋 Tell us about yourself</h4>
+      <form id="chatContactForm" autocomplete="off">
+        <div class="chat-field-group">
+          <label class="chat-field-label">Full Name <span class="req">*</span></label>
+          <input type="text" name="chat_name" class="chat-field" placeholder="e.g. Amaka Okonkwo" required>
+        </div>
+        <div class="chat-field-group">
+          <label class="chat-field-label">Phone Number <span class="req">*</span></label>
+          <input type="tel" name="chat_phone" class="chat-field" placeholder="e.g. 08033254690" required>
+        </div>
+        <div class="chat-field-group">
+          <label class="chat-field-label">What can we help you with?</label>
+          <select name="chat_inquiry" class="chat-field">
+            <option value="">Select inquiry type...</option>
+            <option value="Book Appointment">Book an Appointment</option>
+            <option value="Antenatal Registration">Antenatal Registration</option>
+            <option value="General Inquiry">General Inquiry</option>
+            <option value="Emergency">Emergency Inquiry</option>
+            <option value="HMO / Insurance">HMO / Insurance</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <button type="submit" class="chat-send-btn"><i class="fas fa-paper-plane"></i> Start Conversation</button>
+      </form>
+    </div>
+    <div class="chat-live-area" id="chatLiveInput">
+      <input type="text" id="chatUserInput" class="chat-live-field" placeholder="Ask me anything…" autocomplete="off">
+      <button id="chatSendBtn" class="chat-live-send" aria-label="Send"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script src="chatbot-frontend.js"></script>
+<script>
+  // ── Filter Logic ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.gallery-item');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      items.forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // ── Lightbox Logic ──
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lbImg');
+  const lbCaption = document.getElementById('lbCaption');
+  const lbCounter = document.getElementById('lbCounter');
+  const lbClose   = document.getElementById('lbClose');
+  const lbPrev    = document.getElementById('lbPrev');
+  const lbNext    = document.getElementById('lbNext');
+
+  let visibleItems = [];
+  let currentIdx   = 0;
+
+  function getVisible() {
+    return [...document.querySelectorAll('.gallery-item:not(.hidden)')];
+  }
+
+  function openLightbox(idx) {
+    visibleItems = getVisible();
+    currentIdx = idx;
+    showSlide(currentIdx);
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showSlide(idx) {
+    const item = visibleItems[idx];
+    lbImg.src = item.dataset.src;
+    lbImg.alt = item.dataset.caption;
+    lbCaption.textContent = item.dataset.caption;
+    lbCounter.textContent = (idx + 1) + ' / ' + visibleItems.length;
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      visibleItems = getVisible();
+      const idx = visibleItems.indexOf(item);
+      if (idx !== -1) openLightbox(idx);
+    });
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+  lbPrev.addEventListener('click', () => {
+    currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length;
+    showSlide(currentIdx);
+  });
+  lbNext.addEventListener('click', () => {
+    currentIdx = (currentIdx + 1) % visibleItems.length;
+    showSlide(currentIdx);
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft')  { currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length; showSlide(currentIdx); }
+    if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % visibleItems.length; showSlide(currentIdx); }
+    if (e.key === 'Escape')     closeLightbox();
+  });
+</script>
+</body>
+</html>
