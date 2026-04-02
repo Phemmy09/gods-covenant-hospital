@@ -51,9 +51,33 @@
   </div>
 </nav>
 
-<!-- PAGE HERO -->
-<section class="page-hero">
-  <div class="page-hero-deco"></div>
+<!-- PAGE HERO WITH SLIDESHOW -->
+<section class="page-hero hero-slides-active" id="pageHero">
+
+  <!-- Background slideshow images -->
+  <div class="hero-slideshow-wrap" aria-hidden="true">
+    <div class="hero-slide-bg active" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/medical-doctor-patient-scan.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-2.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/surgical-team-theatre.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/surgeons-operating.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM-1.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/medical-team-patient.jpg');background-position:center center"></div>
+  </div>
+
+  <!-- Dark overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- GCH logo watermark -->
+  <div class="hero-logo-watermark">
+    <img src="saveweb2zip-com-godscovenanthospital-com/images/cropped-WhatsApp_Image_2025-12-27_at_5.30.32_PM-removebg-preview.png" alt="GCH Logo">
+    <span>GOD'S COVENANT<br>HOSPITAL</span>
+  </div>
+
+  <!-- Slide dots -->
+  <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
+
+  <!-- Content -->
   <div class="container">
     <div class="breadcrumb">
       <a href="index.html">Home</a>
@@ -65,6 +89,29 @@
     <p>We would love to hear about your experience. Your feedback helps us serve you and others better.</p>
   </div>
 </section>
+
+<script>
+  (function() {
+    const slides = document.querySelectorAll('#pageHero .hero-slide-bg');
+    const dotsWrap = document.getElementById('heroDots');
+    let current = 0;
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Slide ' + (i + 1));
+      d.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(d);
+    });
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      dotsWrap.children[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dotsWrap.children[current].classList.add('active');
+    }
+    setInterval(() => goTo(current + 1), 4500);
+  })();
+</script>
 
 <!-- ══════════════════════════════════════════
      REVIEW LAYOUT
@@ -100,7 +147,7 @@
           <div class="review-existing-item">
             <div class="t-stars">★★★★★</div>
             <p>"God's Covenant Hospital is a great place with nice and very friendly nurses and doctors. Feels very homely and doesn't have the usual 'hospital smell'. 100%"</p>
-            <strong>— Kehinde Famuyitan</strong>
+            <strong>— Mr. Kehinde Famuyantan</strong>
           </div>
           <div class="review-existing-item">
             <div class="t-stars">★★★★★</div>
@@ -200,7 +247,7 @@
         <div class="t-author">
           <div class="t-avatar-placeholder">KF</div>
           <div class="t-author-info">
-            <strong>Kehinde Famuyitan</strong>
+            <strong>Mr. Kehinde Famuyantan</strong>
             <span>Patient</span>
           </div>
         </div>

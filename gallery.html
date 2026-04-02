@@ -346,19 +346,67 @@
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="gallery-hero">
+<!-- HERO WITH SLIDESHOW -->
+<section class="gallery-hero hero-slides-active" id="pageHero">
+
+  <!-- Background slideshow images -->
+  <div class="hero-slideshow-wrap" aria-hidden="true">
+    <div class="hero-slide-bg active" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/medical-doctor-patient-scan.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.47-PM-2.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/surgical-team-theatre.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/surgeons-operating.jpg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-21-at-9.05.46-PM-1.jpeg');background-position:top center"></div>
+    <div class="hero-slide-bg" style="background-image:url('saveweb2zip-com-godscovenanthospital-com/images/medical-team-patient.jpg');background-position:center center"></div>
+  </div>
+
+  <!-- Dark overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- GCH logo watermark -->
+  <div class="hero-logo-watermark">
+    <img src="saveweb2zip-com-godscovenanthospital-com/images/cropped-WhatsApp_Image_2025-12-27_at_5.30.32_PM-removebg-preview.png" alt="GCH Logo">
+    <span>GOD'S COVENANT<br>HOSPITAL</span>
+  </div>
+
+  <!-- Slide dots -->
+  <div class="hero-dots" id="heroDots" aria-hidden="true"></div>
+
+  <!-- Content -->
   <div class="container">
     <div class="breadcrumb">
-      <a href="index.html" style="color:rgba(255,255,255,0.6)">Home</a>
-      <span class="breadcrumb-sep" style="color:rgba(255,255,255,0.4)"><i class="fas fa-chevron-right" style="font-size:0.7rem"></i></span>
-      <span style="color:white">Gallery</span>
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep"><i class="fas fa-chevron-right" style="font-size:0.7rem"></i></span>
+      <span>Gallery</span>
     </div>
     <div class="label-tag" style="margin-top:16px"><i class="fas fa-images"></i> Photo Gallery</div>
-    <h1 style="color:white;margin-top:12px">Moments at God's Covenant Hospital</h1>
-    <p style="color:rgba(255,255,255,0.7);max-width:560px">A glimpse into our hospital, our wonderful team, and the moments that define 25+ years of compassionate care.</p>
+    <h1 style="margin-top:12px">Moments at God's Covenant Hospital</h1>
+    <p style="max-width:560px">A glimpse into our hospital, our wonderful team, and the moments that define 25+ years of compassionate care.</p>
   </div>
 </section>
+
+<script>
+  (function() {
+    const slides = document.querySelectorAll('#pageHero .hero-slide-bg');
+    const dotsWrap = document.getElementById('heroDots');
+    let current = 0;
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Slide ' + (i + 1));
+      d.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(d);
+    });
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      dotsWrap.children[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      dotsWrap.children[current].classList.add('active');
+    }
+    setInterval(() => goTo(current + 1), 4500);
+  })();
+</script>
 
 <!-- STATS BAND -->
 <div class="gallery-stats">
@@ -396,9 +444,9 @@
         <div class="gallery-item-badge badge-hospital">Hospital</div>
       </div>
 
-      <div class="gallery-item" data-category="hospital" data-caption="Our Welcoming Reception" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital recetionist.jpeg">
+      <div class="gallery-item" data-category="hospital" data-caption="Free Medical Check" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital recetionist.jpeg">
         <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital recetionist.jpeg" alt="GCH Reception" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Welcoming Reception</div></div>
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Free Medical Check</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-hospital">Hospital</div>
       </div>
@@ -410,9 +458,9 @@
         <div class="gallery-item-badge badge-hospital">Hospital</div>
       </div>
 
-      <div class="gallery-item" data-category="hospital" data-caption="Hospital Facilities" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg" alt="Hospital Facilities" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Hospital Facilities</div></div>
+      <div class="gallery-item" data-category="hospital" data-caption="Mr Famuyantan" data-src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/WhatsApp-Image-2025-12-28-at-8.11.38-AM-1.jpeg" alt="Mr Famuyantan" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Mr Famuyantan</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-hospital">Hospital</div>
       </div>
@@ -425,9 +473,9 @@
       </div>
 
       <!-- TEAM -->
-      <div class="gallery-item" data-category="team" data-caption="Our Dedicated Team" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg" alt="GCH Staff Team" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Our Dedicated Team</div></div>
+      <div class="gallery-item" data-category="team" data-caption="Staff End of the Year Party" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers.jpeg" alt="Staff End of the Year Party" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff End of the Year Party</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-team">Team</div>
       </div>
@@ -439,16 +487,16 @@
         <div class="gallery-item-badge badge-team">Team</div>
       </div>
 
-      <div class="gallery-item" data-category="team" data-caption="Staff in Traditional Attire" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg" alt="GCH Staff in Natives" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff in Traditional Attire</div></div>
+      <div class="gallery-item" data-category="team" data-caption="Staff End of the Year Party" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style.jpeg" alt="Staff End of the Year Party" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff End of the Year Party</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-team">Team</div>
       </div>
 
-      <div class="gallery-item" data-category="team" data-caption="Staff at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg" alt="GCH Staff Occasion" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff at an Occasion</div></div>
+      <div class="gallery-item" data-category="team" data-caption="Staff End of the Year Party" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in an occassion in natives.jpeg" alt="Staff End of the Year Party" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff End of the Year Party</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-team">Team</div>
       </div>
@@ -552,9 +600,9 @@
         <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
       </div>
 
-      <div class="gallery-item" data-category="dr-dare" data-caption="Dr Dare at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg" alt="Dr Dare at Occasion" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Dr Dare at an Occasion</div></div>
+      <div class="gallery-item" data-category="dr-dare" data-caption="Staff Members at an Occasion" data-src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/DR Festus Dare in an occassion-3.jpeg" alt="Staff Members at an Occasion" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff Members at an Occasion</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-dr-dare">Dr. Dare</div>
       </div>
@@ -600,9 +648,9 @@
         <div class="gallery-item-badge badge-celebrate">Celebration</div>
       </div>
 
-      <div class="gallery-item" data-category="celebrate" data-caption="Staff Celebration in Native Style" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg">
-        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg" alt="Staff Celebration" loading="lazy">
-        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff Celebration in Native Style</div></div>
+      <div class="gallery-item" data-category="celebrate" data-caption="Staff End of the Year Party" data-src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg">
+        <img src="saveweb2zip-com-godscovenanthospital-com/images/Gods covenant hospital workers in native style at a celebration.jpeg" alt="Staff End of the Year Party" loading="lazy">
+        <div class="gallery-item-overlay"><div class="gallery-item-caption">Staff End of the Year Party</div></div>
         <div class="gallery-item-zoom"><i class="fas fa-expand-alt"></i></div>
         <div class="gallery-item-badge badge-celebrate">Celebration</div>
       </div>
